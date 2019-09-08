@@ -48,14 +48,17 @@ const string mix(const string& word) {
 }
 
 const int countLines(const string& filename) {
-	ifstream file(filename);
+	ifstream file(filename.c_str());
 
-	int lines(0);
-	string word;
-	while (file >> word)
-		lines += 1;
+	if (file) {
+		int lines(0);
+		string word;
+		while (file >> word)
+			lines += 1;
 
-	return lines;
+		return lines;
+	}
+	return 0;
 }
 
 const string getConsoleWord() {
@@ -68,17 +71,23 @@ const string getConsoleWord() {
 const string getDictionaryWord(const string filename) {
 	int lines = countLines(filename);
 
-	int random(rand() % lines);
+	if (lines != 0) {
+		int random(rand() % lines);
 
-	ifstream file(filename);
+		ifstream file(filename.c_str());
 
-	string word;
-	while (random != 0) {
-		file >> word;
-		random -= 1;
+		if (file) {
+			string word;
+			while (random != 0) {
+				file >> word;
+				random -= 1;
+			}
+			return word;
+		}
+		return "";
+
 	}
-
-	return word;
+	return "";
 }
 
 void play(const string& word, bool* again) {
@@ -122,7 +131,12 @@ void play1() {
 		string word;
 		word = getDictionaryWord(DICO);
 
-		play(word, &again);
+		if (word != "")
+			play(word, &again);
+		else {
+			cout << "ERROR in opening file" << endl;
+			break;
+		}
 
 	} while (again);
 }
